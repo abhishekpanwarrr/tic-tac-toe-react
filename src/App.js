@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import Board from "./components/board";
+import Reset from "./components/reset";
+import ScoreBoard from "./components/scores";
 const App = () => {
   const WIN_CONDITIONS = [
     [0, 1, 2],
@@ -17,8 +19,9 @@ const App = () => {
     xScore: 0,
     oScore: 0,
   });
-  console.log("🚀 ~ file: App.js ~ line 20 ~ App ~ scores", scores);
-  console.log("🚀 ~ file: App.js ~ line 6 ~ App ~ xPlaying", xPlaying);
+  const [gameOver, setGameOver] = useState(false);
+
+  // function for start game keyboard
   const handleBoxClick = (boxIdx) => {
     const updatedBoard = board.map((value, idx) => {
       if (idx === boxIdx) {
@@ -43,22 +46,27 @@ const App = () => {
     setXPlaying((player) => !player);
   };
 
+  // function for checking winner
   const checkWinner = (board) => {
     for (let i = 0; i < WIN_CONDITIONS.length; i++) {
       const [x, y, z] = WIN_CONDITIONS[i];
       if (board[x] && board[x] === board[y] && board[y] === board[z]) {
-        console.log(
-          "🚀 ~ file: App.js ~ line 33 ~ checkWinner ~ board[x]",
-          board[x]
-        );
+        setGameOver(true);
         return board[x];
       }
     }
   };
+  //function for reseting the game
+  const resetBoard = () => {
+    setGameOver(false);
+    setBoard(Array(9).fill(null));
+  };
 
   return (
     <>
-      <Board board={board} onClick={handleBoxClick} />
+      <ScoreBoard scores={scores} xPlaying={xPlaying} />
+      <Board board={board} onClick={gameOver ? resetBoard : handleBoxClick} />
+      <Reset resetBoard={resetBoard} />
     </>
   );
 };
